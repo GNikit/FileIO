@@ -269,4 +269,4 @@ __pycache__/
 
 # Ignore Source.cpp
 Source.cpp
-FileLoading.cpp
+/test.exe
