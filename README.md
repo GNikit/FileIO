@@ -9,8 +9,7 @@ In the case where the user-defined columns *n* are less than the file columns, `
 
 
 ## Usage
-Code to run the program can be found in **Source.cpp**. The example above, demonstrates the basic idea.
-
+Reading a two-column file.
 ```
 #include "FileLoading.cpp"
 
