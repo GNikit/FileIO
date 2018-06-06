@@ -4,11 +4,14 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <iterator>
+
+#define RESERVE_MEMORY 50000
+
 
 template <class T>
 class FileLoading {
 protected:
-	std::vector<std::vector<T>> data;
 public:
 	FileLoading();
 	~FileLoading();
@@ -52,6 +55,7 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_nam
 
 	std::ifstream file(file_name);
 	file.exceptions(file.failbit);  // Throws exception
+	std::vector<std::vector<T>> data;
 
 	try {
 		T temp;
@@ -60,10 +64,10 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_nam
 
 		// Reserve space for column vectors
 		for (int i = 0; i < data.size(); i++) {
-			data.at(i).reserve(50000);
+			data.at(i).reserve(RESERVE_MEMORY);
 		}
 
-		while (std::getline(file, line).good()) {
+		while (std::getline(file, line)) {
 			if (line.size() != 0 && line[0] != comment) {
 				std::stringstream ss(line);
 
@@ -92,10 +96,10 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_nam
 template<class T>
 std::vector<T> FileLoading<T>::LoadSingleCol(const std::string & file_name) {
 	/*
-	  Reads from a stream that already exists for a file that is already placed in the
-	  directory and appends the data into a 1D vector.
+	  Reads
 	*/
 	std::vector<T> data;
+	data.reserve(RESERVE_MEMORY);	// increases performance for large files
 	std::ifstream file(file_name);
 	file.exceptions(file.failbit);  // Throws exception
 
