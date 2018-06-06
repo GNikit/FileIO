@@ -40,17 +40,17 @@ template<class T>
 std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_name,
 													size_t columns, char comment) {
 	/*
-	  Used to read a file with either "space" or "tab" delimated columns.
-	  The number of columns in the file has to be known and be passed as an argument.
+	Used to read a file with either "space" or "tab" delimated columns.
+	The number of columns in the file has to be known and be passed as an argument.
 
-	  In the case where a smaller number of columns is supplied, than the number
-	  contained in the file, then only these columns will be extracted.
+	In the case where a smaller number of columns is supplied, than the number
+	contained in the file, then only these columns will be extracted.
 
-	  @param file_name: The name/relative path to the file with extension
-	  @param columns: The total number of columns in the file
-	  @param comment: Character to be treated as comment. Lines starting with comment
-					  will be ignored
-	  @return data[][]: Vector of vectors, with each sub-vector being a read column
+	@param file_name: The name/relative path to the file with extension
+	@param columns: The total number of columns in the file
+	@param comment: Character to be treated as comment. Lines starting with comment
+	will be ignored
+	@return data[][]: Vector of vectors, with each sub-vector being a read column
 	*/
 
 	std::ifstream file(file_name);
@@ -97,7 +97,7 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_nam
 template<class T>
 std::vector<T> FileLoading<T>::LoadSingleCol(const std::string & file_name) {
 	/*
-	  Reads a file that is structured with data in a column
+	Reads a file that is structured with data in a column
 	*/
 	std::vector<T> data;
 	data.reserve(RESERVE_MEMORY);	// increases performance for large files
