@@ -80,6 +80,7 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_nam
 				}
 			}
 		}
+		file.close();	// just in case it fails to close
 	}
 	catch (const std::ios_base::failure& e) {
 		if (!file.eof())
@@ -96,26 +97,16 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_nam
 template<class T>
 std::vector<T> FileLoading<T>::LoadSingleCol(const std::string & file_name) {
 	/*
-	  Reads
+	  Reads a file that is structured with data in a column
 	*/
 	std::vector<T> data;
 	data.reserve(RESERVE_MEMORY);	// increases performance for large files
 	std::ifstream file(file_name);
-	file.exceptions(file.failbit);  // Throws exception
 
-	try {
-		std::copy(std::istream_iterator<T>(file),
-				  std::istream_iterator<T>(), std::back_inserter(data));
-	}
+	// TODO: add exception handling for wrong file name
+	std::copy(std::istream_iterator<T>(file),
+			  std::istream_iterator<T>(), std::back_inserter(data));
 
-	catch (const std::ios_base::failure& e) {
-		if (!file.eof())
-			/*if EOF sets eofbit/failbit 0, normally getline sets to 1
-			if nothing is extracted from a line. */
-			std::cerr << "Caught an ios_base::failure.\n"
-			<< "Explanatory string: " << e.what() << '\n'
-			<< "Error code: " << e.code() << '\n';
-	}
 	return data;
 
 }
