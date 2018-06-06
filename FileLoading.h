@@ -22,6 +22,7 @@ public:
 	//TODO: Investigate why vec2d not working outside of class def in template LoadTxt
 	std::vector<std::vector<T>> LoadTxt(const std::string &file_name,
 										size_t columns, char comment);
+	std::vector<T> LoadSingleCol(const std::string &file_name);
 };
 
 template<class T>
@@ -86,4 +87,31 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(const std::string & file_nam
 
 	}
 	return data;
+}
+
+template<class T>
+std::vector<T> FileLoading<T>::LoadSingleCol(const std::string & file_name) {
+	/*
+	  Reads from a stream that already exists for a file that is already placed in the
+	  directory and appends the data into a 1D vector.
+	*/
+	std::vector<T> data;
+	std::ifstream file(file_name);
+	file.exceptions(file.failbit);  // Throws exception
+
+	try {
+		std::copy(std::istream_iterator<T>(file),
+				  std::istream_iterator<T>(), std::back_inserter(data));
+	}
+
+	catch (const std::ios_base::failure& e) {
+		if (!file.eof())
+			/*if EOF sets eofbit/failbit 0, normally getline sets to 1
+			if nothing is extracted from a line. */
+			std::cerr << "Caught an ios_base::failure.\n"
+			<< "Explanatory string: " << e.what() << '\n'
+			<< "Error code: " << e.code() << '\n';
+	}
+	return data;
+
 }
