@@ -97,13 +97,22 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
 template <class T>
 void FileIO<T>::PrintFile(const std::string& file_name, size_t columns, char comment) {
   FileIO<T> f;
+  /*
+   * Prints the file contents to the terminal, without the comments or headers.
+   * The method assumes that all columns are of the same length.
+   * 
+   *  @param file_name: The name/relative path to the file with extension
+   *  @param columns: The total number of columns in the file
+   *  @param comment: Character to be treated as comment. Lines starting with
+   *                  comment will be ignored
+   */
 
   // File Contents vector
   std::vector<std::vector<T>> fc;
 
   // Read file into fc
   fc = f.ReadFile(file_name, columns, comment);
-  
+
   // Prints only the file contents not the comments of the file
   size_t col = 0;
   while (col < fc[0].size()) {
