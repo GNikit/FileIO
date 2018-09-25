@@ -9,33 +9,33 @@
 #define RESERVE_MEMORY 50000
 
 template <class T>
-class FileLoading {
+class FileIO {
  protected:
  public:
-  FileLoading();
-  ~FileLoading();
+  FileIO();
+  ~FileIO();
   typedef std::vector<std::vector<T>> vec2d;
 
   // TODO: make it return a tuple of vectors
   // could be done by either templating a second template variable TUPLE_N
-  // ---> TUPLE_N FileLoading<T>::LoadTxt(const std::string & file_name, blah
+  // ---> TUPLE_N FileIO<T>::ReadFile(const std::string & file_name, blah
   // blah blah) or using a vardic template
   //--->http://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
   // TODO: Investigate why vec2d not working outside of class def in template
-  // LoadTxt
-  std::vector<std::vector<T>> LoadTxt(const std::string& file_name,
+  // ReadFile
+  std::vector<std::vector<T>> ReadFile(const std::string& file_name,
                                       size_t columns, char comment);
   std::vector<T> LoadSingleCol(const std::string& file_name);
 };
 
 template <class T>
-FileLoading<T>::FileLoading() {}
+FileIO<T>::FileIO() {}
 
 template <class T>
-FileLoading<T>::~FileLoading() {}
+FileIO<T>::~FileIO() {}
 
 template <class T>
-std::vector<std::vector<T>> FileLoading<T>::LoadTxt(
+std::vector<std::vector<T>> FileIO<T>::ReadFile(
     const std::string& file_name, size_t columns, char comment) {
   /*
    *  Used to read a file with either "space" or "tab" delimated columns.
@@ -93,7 +93,7 @@ std::vector<std::vector<T>> FileLoading<T>::LoadTxt(
 }
 
 template <class T>
-std::vector<T> FileLoading<T>::LoadSingleCol(const std::string& file_name) {
+std::vector<T> FileIO<T>::LoadSingleCol(const std::string& file_name) {
   /*
    *  Reads a file that is structured with data in a column.
    *  No option for comments or headers.
