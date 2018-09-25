@@ -272,4 +272,6 @@ Source.cpp
 /test.exe
 *.out
 *.o
+*.gch
+FileIO.h.gch
 
