@@ -270,3 +270,6 @@ __pycache__/
 # Ignore Source.cpp
 Source.cpp
 /test.exe
+*.out
+*.o
+
