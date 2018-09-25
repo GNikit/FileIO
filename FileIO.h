@@ -24,7 +24,9 @@ class FileIO {
   // TODO: Investigate why vec2d not working outside of class def in template
   // ReadFile
   std::vector<std::vector<T>> ReadFile(const std::string& file_name,
-                                      size_t columns, char comment);
+                                       size_t columns, char comment);
+  void PrintFile(const std::string& file_name,
+                 size_t columns, char comment);
   std::vector<T> LoadSingleCol(const std::string& file_name);
 };
 
@@ -63,7 +65,7 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
     std::string line;
 
     // Reserve space for column vectors
-    for (int i = 0; i < data.size(); i++) {
+    for (size_t i = 0; i < data.size(); i++) {
       data.at(i).reserve(RESERVE_MEMORY);
     }
 
@@ -74,7 +76,7 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
         // could include testing for tabs == columns -1
         // otherwise throw range_error or logic_error exception
         // catch that const std::exception &e
-        for (int i = 0; i < columns; i++) {
+        for (size_t i = 0; i < columns; i++) {
           ss >> temp;
           data[i].push_back(temp);
         }
@@ -90,6 +92,27 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
                 << "Error code: " << e.code() << '\n';
   }
   return data;
+}
+
+template <class T>
+void FileIO<T>::PrintFile(const std::string& file_name, size_t columns, char comment) {
+  FileIO<T> f;
+
+  // File Contents vector
+  std::vector<std::vector<T>> fc;
+
+  // Read file into fc
+  fc = f.ReadFile(file_name, columns, comment);
+  
+  // Prints only the file contents not the comments of the file
+  size_t col = 0;
+  while (col < fc[0].size()) {
+    for (size_t i = 0; i < fc.size(); i++) {
+      std::cout << fc[i][col] << ' ';
+    }
+    std::cout << std::endl;
+    ++col;
+  }
 }
 
 template <class T>
