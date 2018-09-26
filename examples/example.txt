@@ -1,4 +1,0 @@
-# This is a text file meant for testing
-0   9
-1   8
-2   7

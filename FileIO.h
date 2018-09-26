@@ -25,8 +25,9 @@ class FileIO {
   // ReadFile
   std::vector<std::vector<T>> ReadFile(const std::string& file_name,
                                        size_t columns, char comment);
-  void PrintFile(const std::string& file_name,
-                 size_t columns, char comment);
+  std::vector<std::vector<T>> PrintFile(const std::string& file_name,
+                                        size_t columns, char comment);
+  void Write2File(std::vector<std::vector<T>>& data, const std::string& file_name, const std::string& del);
   std::vector<T> LoadSingleCol(const std::string& file_name);
 };
 
@@ -52,7 +53,7 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
    *  @param comment: Character to be treated as comment. Lines starting with
    *                  comment will be ignored
    *  @return data[][]: Vector of vectors, with each sub-vector being a read
-   * column
+   *                    column
    */
 
   std::ifstream file(file_name);
@@ -65,7 +66,7 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
     std::string line;
 
     // Reserve space for column vectors
-    for (size_t i = 0; i < data.size(); i++) {
+    for (size_t i = 0; i < data.size(); ++i) {
       data.at(i).reserve(RESERVE_MEMORY);
     }
 
@@ -76,7 +77,7 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
         // could include testing for tabs == columns -1
         // otherwise throw range_error or logic_error exception
         // catch that const std::exception &e
-        for (size_t i = 0; i < columns; i++) {
+        for (size_t i = 0; i < columns; ++i) {
           ss >> temp;
           data[i].push_back(temp);
         }
@@ -95,7 +96,8 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
 }
 
 template <class T>
-void FileIO<T>::PrintFile(const std::string& file_name, size_t columns, char comment) {
+std::vector<std::vector<T>> FileIO<T>::PrintFile(const std::string& file_name,
+                                                 size_t columns, char comment) {
   FileIO<T> f;
   /*
    * Prints the file contents to the terminal, without the comments or headers.
@@ -105,6 +107,8 @@ void FileIO<T>::PrintFile(const std::string& file_name, size_t columns, char com
    *  @param columns: The total number of columns in the file
    *  @param comment: Character to be treated as comment. Lines starting with
    *                  comment will be ignored
+   *  @return data[][]: Vector of vectors, with each sub-vector being a read
+   *                    column
    */
 
   // File Contents vector
@@ -116,12 +120,41 @@ void FileIO<T>::PrintFile(const std::string& file_name, size_t columns, char com
   // Prints only the file contents not the comments of the file
   size_t col = 0;
   while (col < fc[0].size()) {
-    for (size_t i = 0; i < fc.size(); i++) {
+    for (size_t i = 0; i < fc.size(); ++i) {
       std::cout << fc[i][col] << ' ';
     }
     std::cout << std::endl;
     ++col;
   }
+  return fc;
+}
+
+template <class T>
+void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
+                           const std::string& file_name, const std::string& del) {
+  /*
+   * Takes a 2D vector as input and writes it to a file 
+   * regardless of its structure.
+   * 
+   * @param data: 2D data structure
+   * @param file_name: The name/relative path to the file with extension
+   * @param del: The delimiter that the file will be separated with
+   */
+
+  // TODO: currently only handles 2D vectors can't be bothered to make it more general
+  // can be generalised by making it a T,U template with U the typw of 'data' variable
+  // Open stream out
+  std::ofstream f;
+  f.open(file_name, std::ios::out | std::ios::trunc);
+
+  // Iterate through any shape of 2D vector, including unstructured arrays
+  for (const auto& row : data) {
+    for (const auto& col : row) {
+      f << col << del;
+    }
+    f << std::endl;
+  }
+  f.close();
 }
 
 template <class T>
