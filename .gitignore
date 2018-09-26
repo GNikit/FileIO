@@ -274,4 +274,5 @@ Source.cpp
 *.o
 *.gch
 FileIO.h.gch
+.vscode/
 
