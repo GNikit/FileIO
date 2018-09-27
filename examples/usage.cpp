@@ -2,41 +2,39 @@
 
 int main() {
   FileIO<double> f;
-  // Testing PrintFile on structured arrays
-  std::cout << "PrintFile structured test" << std::endl;
-  f.PrintFile("multi_col_example.txt", 10, '#');
 
-  // Testing ReadFile on structured arrays
-  std::cout << "ReadFile structured test" << std::endl;
+  // Read a structured file into a vector
   auto ar = f.ReadFile("multi_col_example.txt", 10, '#');
 
-  for (const auto& i : ar[0]) {
-    std::cout << i << '\t';
-  }
+  // Output vector
+  f.PrintArray(ar);
+
+  // Write 2D vector to file
+  f.Write2File(ar, "structured_file_writting.txt", "\t");
+
+  // Read a 1D vector from file
+  auto one_dim = f.LoadSingleCol("1v_example.txt");
+  for (const auto& i : one_dim) std::cout << i << " ";
   std::cout << std::endl;
 
-  // Write2File not jagged
-  f.Write2File(ar, "write2file_test.txt", "\t", false);
-  std::cout << "\nOutputs should be identical\n"
-            << std::endl;
-  f.PrintFile("write2file_test.txt", 10, '#');
+  // Generate a jagged array
+  size_t rows = 10;
+  size_t num = 0;
+  std::vector<std::vector<double>> jagged(rows);
 
-  // Testing the multicolumn, irregular, file writting
-  std::cout << "Write2File unstructured test" << std::endl;
-  std::vector<std::vector<double>> a(10);
-  // Create an irregular 2D vector
-  for (int i = 1; i < 10; ++i) {
-    for (int j = 0; j < i; ++j) {
-      a[i].push_back(j);
+  for (size_t i = 1; i < rows; ++i) {
+    for (size_t j = 0; j < i; j++) {
+      jagged[i - 1].push_back(num);
+      ++num;
     }
   }
-  f.Write2File(a, "irregular_vec_to_file.txt", "\t", true);
 
-  // // Load the saved file
-  // std::cout << "ReadFile unstructured test" << std::endl;
-  // // TODO: ReadFile fails to read unstructed files
-  // auto b = f.ReadFile("irregular_vec_to_file.txt", 10, '#');
-  // f.Write2File(b, "irregular_file_read_test.txt", " ");
+  // Write the jagged array to a file
+  f.Write2File(jagged, "jagged_array_write.txt", " ", true );
 
-  // // Write a single vector to file
+  // Read jagged array from file
+  auto jagged_in = f.ReadFile("jagged_array_write.txt", rows, '#', true);
+
+  // Output jagged array
+  f.PrintArray(jagged_in);
 }
