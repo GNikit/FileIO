@@ -1,8 +1,6 @@
 #include "../FileIO.h"
 
-
-int main(){
-
+int main() {
   // Generate vector, write to file, read it and compare equal
 
   size_t rows = 10;
@@ -10,9 +8,9 @@ int main(){
   size_t num = 0;
   std::vector<std::vector<double>> data(rows);
 
-  // Populate the vector 
-  for (size_t i = 0; i < rows; ++i){
-    for (size_t j = 0; j < cols; ++j){
+  // Populate the vector
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; ++j) {
       data[i].push_back(num);
       ++num;
     }
@@ -24,14 +22,9 @@ int main(){
   // Read data from file
   auto in = f.ReadFile("2d_vector_write_test.txt", rows, '#', false);
 
-  if (data == in){
-    std::cout << "Read/Write of structured arrays passes" << std::endl;
+  if (data == in) {
+    std::cout << "YES\tRead/Write of structured arrays passes" << std::endl;
+  } else {
+    std::cout << "NO\tRead/Write of structured arrays fails" << std::endl;
   }
-  else{
-    std::cout << "Read/Write of structured arrays fails" << std::endl;
-  
-  }
-
-
-
 }

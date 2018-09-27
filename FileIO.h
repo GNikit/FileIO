@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -51,6 +52,13 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(const std::string& file_name,
    *  Used to read a file with either "space" or "tab" delimated columns.
    *  The number of columns in the file has to be known and be passed as an
    *  argument.
+   * 
+   *      |0 1 2|                                |0 3 6|
+   *  v = |3 4 5| ; then v[0] = [0 1 2] ; file = |1 4 7|
+   *      |6 7 8|                                |2 5 8|  
+   * 
+   *  In the case where the array is jagged, then no transpose occurs 
+   *  and the vector is written in the file as-is.
    *
    *  In the case where a smaller number of columns is supplied, than the number
    *  contained in the file, then only these columns will be extracted.
@@ -84,10 +92,17 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(const std::string& file_name,
       size_t row = 0;
       while (std::getline(file, line)) {
         if (line.size() != 0 && line[0] != comment) {
-          std::stringstream ss(line);
-          ss >> temp;
-          // Pass entire line into the vector
-          data[row].push_back(temp);
+          // Pass string to input string stream
+          std::istringstream ss(line);
+
+          // Read the nubers into a temp vector
+          std::vector<T> temp;  // Possibly reserve some space more efficient
+          T num;
+          // Pass values from string stream to vector
+          while (ss >> num) {temp.push_back(num);}
+
+          // Appending elements to the 2D array
+          data[row].insert(std::end(data[row]), std::begin(temp), std::end(temp));
           ++row;
         }
       }
@@ -161,7 +176,7 @@ void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
                            const std::string& del,
                            bool jagged) {
   /*
-   * THIS METHOD TRANPOSES THE VECTOR!!!
+   * THIS METHOD TRANPOSES THE VECTOR IF THE ARRAY IS NOT JAGGED!!!
    * e.g. a [10][2] will be written as a [2][10]
    * Takes a 2D vector as input and writes it to a file 
    * regardless of its structure.
@@ -182,6 +197,7 @@ void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
       for (const auto& col : row) {
         f << col << del;
       }
+      // For some reason this executes twice at EOF
       f << std::endl;
     }
   } else {

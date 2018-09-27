@@ -277,3 +277,6 @@ FileIO.h.gch
 .vscode/
 
 tests/debug
+tests/2d_vector_write_test.txt
+tests/jagged_array_test.txt
+jagged_array_test.txt
