@@ -29,10 +29,10 @@ class FileIO {
                                         size_t columns, char comment);
   void Write2File(std::vector<std::vector<T>>& data,
                   const std::string& file_name,
-                  const std::string& del);
+                  const std::string& del,
+                  bool jagged = false);
   void Write2File(std::vector<T>& data,
-                  const std::string& file_name,
-                  const std::string& del);
+                  const std::string& file_name);
   std::vector<T> LoadSingleCol(const std::string& file_name);
 };
 
@@ -126,7 +126,7 @@ std::vector<std::vector<T>> FileIO<T>::PrintFile(const std::string& file_name,
   size_t col = 0;
   while (col < fc[0].size()) {
     for (size_t i = 0; i < fc.size(); ++i) {
-      std::cout << fc[i][col] << ' ';
+      std::cout << fc[i][col] << '\t';
     }
     std::cout << std::endl;
     ++col;
@@ -136,7 +136,9 @@ std::vector<std::vector<T>> FileIO<T>::PrintFile(const std::string& file_name,
 
 template <class T>
 void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
-                           const std::string& file_name, const std::string& del) {
+                           const std::string& file_name,
+                           const std::string& del,
+                           bool jagged) {
   /*
    * THIS METHOD TRANPOSES THE VECTOR!!!
    * e.g. a [10][2] will be written as a [2][10]
@@ -154,28 +156,27 @@ void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
   std::ofstream f;
   f.open(file_name, std::ios::out | std::ios::trunc);
 
-  // Iterate through any shape of 2D vector, including unstructured arrays
-  // for (const auto& row : data) {
-  //   for (const auto& col : row) {
-  //     f << col << del;
-  //   }
-  //   f << std::endl;
-  // }
-  // This quick-fix transposes the vector but cannot handle unstructured vecs 
-  size_t row = 0;
-  while (row < data[0].size()) {
-    for (size_t i = 0; i < data.size(); ++i) {
-      f << data[i][row] << del;
+  if (jagged) {
+    for (const auto& row : data) {
+      for (const auto& col : row) {
+        f << col << del;
+      }
+      f << std::endl;
     }
-    f << std::endl;
-    ++row;
+  } else {
+    for (size_t col = 0; col < data[0].size(); ++col) {
+      for (size_t i = 0; i < data.size(); ++i) {
+        f << data[i][col] << del;
+      }
+      f << std::endl;
+    }
   }
   f.close();
 }
 
 template <class T>
 void FileIO<T>::Write2File(std::vector<T>& data,
-                           const std::string& file_name, const std::string& del) {
+                           const std::string& file_name) {
   /*
    * Takes a 1D vector as input and writes it to a file 
    * regardless of its structure.
