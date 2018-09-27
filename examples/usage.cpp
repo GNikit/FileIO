@@ -30,7 +30,7 @@ int main() {
   }
 
   // Write the jagged array to a file
-  f.Write2File(jagged, "jagged_array_write.txt", " ", true );
+  f.Write2File(jagged, "jagged_array_write.txt", " ", true);
 
   // Read jagged array from file
   auto jagged_in = f.ReadFile("jagged_array_write.txt", rows, '#', true);
