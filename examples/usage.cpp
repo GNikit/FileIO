@@ -15,7 +15,7 @@ int main() {
   }
   std::cout << std::endl;
 
-  // Write2File
+  // Write2File not jagged
   f.Write2File(ar, "write2file_test.txt", "\t", false);
   std::cout << "\nOutputs should be identical\n"
             << std::endl;

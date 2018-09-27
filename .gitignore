@@ -276,3 +276,4 @@ Source.cpp
 FileIO.h.gch
 .vscode/
 
+tests/debug

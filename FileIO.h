@@ -24,7 +24,8 @@ class FileIO {
   // TODO: Investigate why vec2d not working outside of class def in template
   // ReadFile
   std::vector<std::vector<T>> ReadFile(const std::string& file_name,
-                                       size_t columns, char comment);
+                                       size_t columns, char comment,
+                                       bool jagged = false);
   std::vector<std::vector<T>> PrintFile(const std::string& file_name,
                                         size_t columns, char comment);
   void Write2File(std::vector<std::vector<T>>& data,
@@ -43,8 +44,9 @@ template <class T>
 FileIO<T>::~FileIO() {}
 
 template <class T>
-std::vector<std::vector<T>> FileIO<T>::ReadFile(
-    const std::string& file_name, size_t columns, char comment) {
+std::vector<std::vector<T>> FileIO<T>::ReadFile(const std::string& file_name,
+                                                size_t columns, char comment,
+                                                bool jagged) {
   /*
    *  Used to read a file with either "space" or "tab" delimated columns.
    *  The number of columns in the file has to be known and be passed as an
@@ -72,19 +74,38 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(
 
     // Reserve space for column vectors
     for (size_t i = 0; i < data.size(); ++i) {
-      data.at(i).reserve(RESERVE_MEMORY);
+      data[i].reserve(RESERVE_MEMORY);
     }
 
-    while (std::getline(file, line)) {
-      if (line.size() != 0 && line[0] != comment) {
-        std::stringstream ss(line);
-
-        // could include testing for tabs == columns -1
-        // otherwise throw range_error or logic_error exception
-        // catch that const std::exception &e
-        for (size_t i = 0; i < columns; ++i) {
+    // Allows reading of jagged arrays
+    // In the case of jagged arrays the sub-arrays are row-major
+    // hence every line in the file corresponds to a sub-array
+    if (jagged) {
+      size_t row = 0;
+      while (std::getline(file, line)) {
+        if (line.size() != 0 && line[0] != comment) {
+          std::stringstream ss(line);
           ss >> temp;
-          data[i].push_back(temp);
+          // Pass entire line into the vector
+          data[row].push_back(temp);
+          ++row;
+        }
+      }
+    }
+    // If the array is structured the columns of the file
+    // correspond to the sub-arrays in the data vector
+    else {
+      while (std::getline(file, line)) {
+        if (line.size() != 0 && line[0] != comment) {
+          std::stringstream ss(line);
+
+          // could include testing for tabs == columns -1
+          // otherwise throw range_error or logic_error exception
+          // catch that const std::exception &e
+          for (size_t i = 0; i < columns; ++i) {
+            ss >> temp;
+            data[i].push_back(temp);
+          }
         }
       }
     }
