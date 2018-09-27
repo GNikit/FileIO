@@ -30,8 +30,7 @@ int main() {
       a[i].push_back(j);
     }
   }
-  // // TODO: current implementation broke this feature
-  // // f.Write2File(a, "irregular_vec_to_file.txt", " ");
+  f.Write2File(a, "irregular_vec_to_file.txt", "\t", true);
 
   // // Load the saved file
   // std::cout << "ReadFile unstructured test" << std::endl;
