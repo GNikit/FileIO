@@ -19,11 +19,15 @@ int main() {
       a[i].push_back(j);
     }
   }
-  f.Write2File(a, "irregular_vec_to_file.txt", " ");
+  // TODO: current implementation broke this feature
+  // f.Write2File(a, "irregular_vec_to_file.txt", " ");
 
   // Load the saved file
   std::cout << "ReadFile unstructured test" << std::endl;
   // TODO: ReadFile fails to read unstructed files
   auto b = f.ReadFile("irregular_vec_to_file.txt", 10, '#');
   f.Write2File(b, "irregular_file_read_test.txt", " ");
+
+  // Write a single vector to file
+  
 }

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#define RESERVE_MEMORY 50000
+#define RESERVE_MEMORY 50000000
 
 template <class T>
 class FileIO {
@@ -27,7 +27,12 @@ class FileIO {
                                        size_t columns, char comment);
   std::vector<std::vector<T>> PrintFile(const std::string& file_name,
                                         size_t columns, char comment);
-  void Write2File(std::vector<std::vector<T>>& data, const std::string& file_name, const std::string& del);
+  void Write2File(std::vector<std::vector<T>>& data,
+                  const std::string& file_name,
+                  const std::string& del);
+  void Write2File(std::vector<T>& data,
+                  const std::string& file_name,
+                  const std::string& del);
   std::vector<T> LoadSingleCol(const std::string& file_name);
 };
 
@@ -133,6 +138,8 @@ template <class T>
 void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
                            const std::string& file_name, const std::string& del) {
   /*
+   * THIS METHOD TRANPOSES THE VECTOR!!!
+   * e.g. a [10][2] will be written as a [2][10]
    * Takes a 2D vector as input and writes it to a file 
    * regardless of its structure.
    * 
@@ -148,11 +155,44 @@ void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
   f.open(file_name, std::ios::out | std::ios::trunc);
 
   // Iterate through any shape of 2D vector, including unstructured arrays
-  for (const auto& row : data) {
-    for (const auto& col : row) {
-      f << col << del;
+  // for (const auto& row : data) {
+  //   for (const auto& col : row) {
+  //     f << col << del;
+  //   }
+  //   f << std::endl;
+  // }
+  // This quick-fix transposes the vector but cannot handle unstructured vecs 
+  size_t row = 0;
+  while (row < data[0].size()) {
+    for (size_t i = 0; i < data.size(); ++i) {
+      f << data[i][row] << del;
     }
     f << std::endl;
+    ++row;
+  }
+  f.close();
+}
+
+template <class T>
+void FileIO<T>::Write2File(std::vector<T>& data,
+                           const std::string& file_name, const std::string& del) {
+  /*
+   * Takes a 1D vector as input and writes it to a file 
+   * regardless of its structure.
+   * 
+   * @param data: 1D data structure
+   * @param file_name: The name/relative path to the file with extension
+   * @param del: The delimiter that the file will be separated with
+   */
+
+  // TODO: currently only handles 2D vectors can't be bothered to make it more general
+  // can be generalised by making it a T,U template with U the typw of 'data' variable
+  // Open stream out
+  std::ofstream f;
+  f.open(file_name, std::ios::out | std::ios::trunc);
+
+  for (const auto& row : data) {
+    f << row << std::endl;
   }
   f.close();
 }
