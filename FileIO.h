@@ -35,6 +35,7 @@ class FileIO {
                   bool jagged = false);
   void Write2File(std::vector<T>& data,
                   const std::string& file_name);
+  void PrintArray(std::vector<std::vector<T>>& data);
   std::vector<T> LoadSingleCol(const std::string& file_name);
 };
 
@@ -96,13 +97,15 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(const std::string& file_name,
           std::istringstream ss(line);
 
           // Read the nubers into a temp vector
-          std::vector<T> temp;  // Possibly reserve some space more efficient
+          std::vector<T> t;  // Possibly reserve some space more efficient
           T num;
           // Pass values from string stream to vector
-          while (ss >> num) {temp.push_back(num);}
+          while (ss >> num) {
+            t.push_back(num);
+          }
 
           // Appending elements to the 2D array
-          data[row].insert(std::end(data[row]), std::begin(temp), std::end(temp));
+          data[row].insert(std::end(data[row]), std::begin(t), std::end(t));
           ++row;
         }
       }
@@ -233,6 +236,17 @@ void FileIO<T>::Write2File(std::vector<T>& data,
     f << row << std::endl;
   }
   f.close();
+}
+
+template <class T>
+void FileIO<T>::PrintArray(std::vector<std::vector<T>>& data){
+    for (const auto& i : data) {
+    for (const auto& j : i) {
+      std::cout << j << '\t';
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
 }
 
 template <class T>
