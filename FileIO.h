@@ -53,10 +53,16 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(const std::string& file_name,
    *  Used to read a file with either "space" or "tab" delimated columns.
    *  The number of columns in the file has to be known and be passed as an
    *  argument.
-   * 
+   *  
+   *  --structured arrays--
    *      |0 1 2|                                |0 3 6|
    *  v = |3 4 5| ; then v[0] = [0 1 2] ; file = |1 4 7|
    *      |6 7 8|                                |2 5 8|  
+   *  
+   *  --jagged arrays--
+   *      |0    |                            |0    |
+   *  v = |1 2  | ; then v[0] = [0] ; file = |1 2  |
+   *      |3 4 5|                            |3 4 5|
    * 
    *  In the case where the array is jagged, then no transpose occurs 
    *  and the vector is written in the file as-is.
@@ -239,8 +245,8 @@ void FileIO<T>::Write2File(std::vector<T>& data,
 }
 
 template <class T>
-void FileIO<T>::PrintArray(std::vector<std::vector<T>>& data){
-    for (const auto& i : data) {
+void FileIO<T>::PrintArray(std::vector<std::vector<T>>& data) {
+  for (const auto& i : data) {
     for (const auto& j : i) {
       std::cout << j << '\t';
     }
