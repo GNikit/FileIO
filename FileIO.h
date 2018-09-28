@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -11,7 +12,6 @@
 
 template <class T>
 class FileIO {
- protected:
  public:
   FileIO();
   ~FileIO();
@@ -25,10 +25,10 @@ class FileIO {
   // TODO: Investigate why vec2d not working outside of class def in template
   // ReadFile
   std::vector<std::vector<T>> ReadFile(const std::string& file_name,
-                                       size_t columns, char comment,
+                                       size_t columns, char comment = '#',
                                        bool jagged = false);
   std::vector<std::vector<T>> PrintFile(const std::string& file_name,
-                                        size_t columns, char comment);
+                                        size_t columns, char comment = '#');
   void Write2File(std::vector<std::vector<T>>& data,
                   const std::string& file_name,
                   const std::string& del,
@@ -37,6 +37,9 @@ class FileIO {
                   const std::string& file_name);
   void PrintArray(std::vector<std::vector<T>>& data);
   std::vector<T> LoadSingleCol(const std::string& file_name);
+
+ protected:
+  void get_time(std::ofstream& stream);
 };
 
 template <class T>
@@ -280,4 +283,12 @@ std::vector<T> FileIO<T>::LoadSingleCol(const std::string& file_name) {
                 << "Error code: " << e.code() << '\n';
   }
   return data;
+}
+
+template <class T>
+void FileIO<T>::get_time(std::ofstream& stream) {
+  std::chrono::time_point<std::chrono::system_clock> instance;
+  instance = std::chrono::system_clock::now();
+  std::time_t date_time = std::chrono::system_clock::to_time_t(instance);
+   stream << "#Created on: " << std::ctime(&date_time);
 }
