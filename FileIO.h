@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#define RESERVE_MEMORY 50000000
+#define RESERVE_MEMORY 100000
 
 template <class T>
 class FileIO {
@@ -290,5 +290,5 @@ void FileIO<T>::get_time(std::ofstream& stream) {
   std::chrono::time_point<std::chrono::system_clock> instance;
   instance = std::chrono::system_clock::now();
   std::time_t date_time = std::chrono::system_clock::to_time_t(instance);
-   stream << "#Created on: " << std::ctime(&date_time);
+  stream << "#Created on: " << std::ctime(&date_time);
 }
