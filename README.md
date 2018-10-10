@@ -15,12 +15,10 @@ Reading a two-column file.
 
 int main() {
 
-        FileIO<double> file;
+        FileIO file;
 	// Load 2D vector from file
-	std::vector<std::vector<double>> test = file.ReadFile("example.txt", 2, '#'); // args: filename, ncols, commentchar
+	std::vector<std::vector<double>> test = file.ReadFile<double>("example.txt", 2, '#'); // args: filename, ncols, commentchar
 	// Write 2D vector to file
-	file.Write2File(test, "example_copy.txt", " "); // args: 2D vector, filename, delimiter
+	file.Write2File<double>(test, "example_copy.txt", " "); // args: 2D vector, filename, delimiter
 }
 ```
-
-
