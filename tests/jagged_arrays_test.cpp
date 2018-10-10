@@ -14,14 +14,15 @@ int main() {
   }
 
   // Write the array to a file
-  FileIO<double> f;
-  f.Write2File(jagged, "jagged_array_test.txt", "\t", true);
-  // f.PrintArray(jagged);
+  FileIO f;
+  // Get path executable
+  std::cout << f.getExecutablePath() << std::endl;
+  f.Write2File<double>(jagged, "jagged_array_test.txt", "\t", true);
+  // f.PrintArray<double>(jagged);
 
   // Read the jagged array intoa vector
-  auto in = f.ReadFile("jagged_array_test.txt", rows, '#', true);
-  // f.PrintArray(in);
-
+  auto in = f.ReadFile<double>("jagged_array_test.txt", rows, '#', true);
+  // f.PrintArray<double>(in);
 
   if (jagged == in) {
     std::cout << "YES\tRead/Write of jagged arrays passes" << std::endl;

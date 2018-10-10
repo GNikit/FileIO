@@ -15,12 +15,14 @@ int main() {
       ++num;
     }
   }
-  FileIO<double> f;
+  FileIO f;
+  // Get path executable
+  std::cout << f.getExecutablePath() << std::endl;
   // Write data to file
-  f.Write2File(data, "2d_vector_write_test.txt", "\t", false);
+  f.Write2File<double>(data, "2d_vector_write_test.txt", "\t", false);
 
   // Read data from file
-  auto in = f.ReadFile("2d_vector_write_test.txt", rows, '#', false);
+  auto in = f.ReadFile<double>("2d_vector_write_test.txt", rows, '#', false);
 
   if (data == in) {
     std::cout << "YES\tRead/Write of structured arrays passes" << std::endl;

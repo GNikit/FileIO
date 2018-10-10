@@ -1,4 +1,3 @@
-#pragma once
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -7,15 +6,30 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#ifdef _WIN32
+#define _WIN32 true
+#include <windows.h>
+std::string getExePath() {
+  char result[MAX_PATH];
+  return std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
+}
+#else
+#define _WIN32 false
+#include <linux/limits.h>
+#include <unistd.h>
+std::string getExePath() {
+  char result[PATH_MAX];
+  ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+  return std::string(result, (count > 0) ? count : 0);
+}
+#endif
 
 #define RESERVE_MEMORY 100000
 
-template <class T>
 class FileIO {
  public:
   FileIO();
   ~FileIO();
-  typedef std::vector<std::vector<T>> vec2d;
 
   // TODO: make it return a tuple of vectors
   // could be done by either templating a second template variable TUPLE_N
@@ -24,34 +38,49 @@ class FileIO {
   //--->http://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
   // TODO: Investigate why vec2d not working outside of class def in template
   // ReadFile
+  template <typename T>
   std::vector<std::vector<T>> ReadFile(const std::string& file_name,
                                        size_t columns, char comment = '#',
                                        bool jagged = false);
+
+  template <typename T>
   std::vector<std::vector<T>> PrintFile(const std::string& file_name,
                                         size_t columns, char comment = '#');
+
+  template <typename T>
   void Write2File(std::vector<std::vector<T>>& data,
                   const std::string& file_name,
                   const std::string& del,
                   bool jagged = false);
+
+  template <typename T>
   void Write2File(std::vector<T>& data,
                   const std::string& file_name);
+
+  template <typename T>
   void PrintArray(std::vector<std::vector<T>>& data);
+
+  template <typename T>
   std::vector<T> LoadSingleCol(const std::string& file_name);
+
+  // TODO: need to find a way to move this from preprocessor into the class
+  std::string getExecutablePath();
+
+  std::string find_and_replace(std::string& source, const std::string& find,
+                               const std::string& replace);
 
  protected:
   void get_time(std::ofstream& stream);
 };
 
-template <class T>
-FileIO<T>::FileIO() {}
+FileIO::FileIO() {}
 
-template <class T>
-FileIO<T>::~FileIO() {}
+FileIO::~FileIO() {}
 
-template <class T>
-std::vector<std::vector<T>> FileIO<T>::ReadFile(const std::string& file_name,
-                                                size_t columns, char comment,
-                                                bool jagged) {
+template <typename T>
+std::vector<std::vector<T>> FileIO::ReadFile(const std::string& file_name,
+                                             size_t columns, char comment,
+                                             bool jagged) {
   /*
    *  Used to read a file with either "space" or "tab" delimated columns.
    *  The number of columns in the file has to be known and be passed as an
@@ -148,10 +177,10 @@ std::vector<std::vector<T>> FileIO<T>::ReadFile(const std::string& file_name,
   return data;
 }
 
-template <class T>
-std::vector<std::vector<T>> FileIO<T>::PrintFile(const std::string& file_name,
-                                                 size_t columns, char comment) {
-  FileIO<T> f;
+template <typename T>
+std::vector<std::vector<T>> FileIO::PrintFile(const std::string& file_name,
+                                              size_t columns, char comment) {
+  FileIO f;
   /*
    * Prints the file contents to the terminal, without the comments or headers.
    * The method assumes that all columns are of the same length.
@@ -168,7 +197,7 @@ std::vector<std::vector<T>> FileIO<T>::PrintFile(const std::string& file_name,
   std::vector<std::vector<T>> fc;
 
   // Read file into fc
-  fc = f.ReadFile(file_name, columns, comment);
+  fc = f.ReadFile<T>(file_name, columns, comment);
 
   // Prints only the file contents not the comments of the file
   size_t col = 0;
@@ -182,11 +211,11 @@ std::vector<std::vector<T>> FileIO<T>::PrintFile(const std::string& file_name,
   return fc;
 }
 
-template <class T>
-void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
-                           const std::string& file_name,
-                           const std::string& del,
-                           bool jagged) {
+template <typename T>
+void FileIO::Write2File(std::vector<std::vector<T>>& data,
+                        const std::string& file_name,
+                        const std::string& del,
+                        bool jagged) {
   /*
    * THIS METHOD TRANPOSES THE VECTOR IF THE ARRAY IS NOT JAGGED!!!
    * e.g. a [10][2] will be written as a [2][10]
@@ -223,9 +252,9 @@ void FileIO<T>::Write2File(std::vector<std::vector<T>>& data,
   f.close();
 }
 
-template <class T>
-void FileIO<T>::Write2File(std::vector<T>& data,
-                           const std::string& file_name) {
+template <typename T>
+void FileIO::Write2File(std::vector<T>& data,
+                        const std::string& file_name) {
   /*
    * Takes a 1D vector as input and writes it to a file 
    * regardless of its structure.
@@ -247,8 +276,8 @@ void FileIO<T>::Write2File(std::vector<T>& data,
   f.close();
 }
 
-template <class T>
-void FileIO<T>::PrintArray(std::vector<std::vector<T>>& data) {
+template <typename T>
+void FileIO::PrintArray(std::vector<std::vector<T>>& data) {
   for (const auto& i : data) {
     for (const auto& j : i) {
       std::cout << j << '\t';
@@ -258,8 +287,8 @@ void FileIO<T>::PrintArray(std::vector<std::vector<T>>& data) {
   std::cout << std::endl;
 }
 
-template <class T>
-std::vector<T> FileIO<T>::LoadSingleCol(const std::string& file_name) {
+template <typename T>
+std::vector<T> FileIO::LoadSingleCol(const std::string& file_name) {
   /*
    *  Reads a file that is structured with data in a column.
    *  No option for comments or headers.
@@ -285,8 +314,26 @@ std::vector<T> FileIO<T>::LoadSingleCol(const std::string& file_name) {
   return data;
 }
 
-template <class T>
-void FileIO<T>::get_time(std::ofstream& stream) {
+std::string FileIO::getExecutablePath() {
+  // TODO: find a better implementation without redefinition inside the template
+  std::string dir = getExePath();
+  if (_WIN32){
+    dir = find_and_replace(dir, "\\", "/");
+  }
+  return dir;
+}
+
+std::string FileIO::find_and_replace(std::string& source, const std::string& find,
+                                     const std::string& replace) {
+  for (std::string::size_type i = 0;
+       (i = source.find(find, i)) != std::string::npos;) {
+    source.replace(i, find.length(), replace);
+    i += replace.length();
+  }
+  return source;
+}
+
+void FileIO::get_time(std::ofstream& stream) {
   std::chrono::time_point<std::chrono::system_clock> instance;
   instance = std::chrono::system_clock::now();
   std::time_t date_time = std::chrono::system_clock::to_time_t(instance);
