@@ -7,14 +7,12 @@
 #include <string>
 #include <vector>
 #ifdef _WIN32
-#define _WIN32 true
 #include <windows.h>
 std::string getExePath() {
   char result[MAX_PATH];
   return std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
 }
 #else
-#define _WIN32 false
 #include <linux/limits.h>
 #include <unistd.h>
 std::string getExePath() {
@@ -317,9 +315,9 @@ std::vector<T> FileIO::LoadSingleCol(const std::string& file_name) {
 std::string FileIO::getExecutablePath() {
   // TODO: find a better implementation without redefinition inside the template
   std::string dir = getExePath();
-  if (_WIN32){
+#ifdef _WIN32
     dir = find_and_replace(dir, "\\", "/");
-  }
+#endif
   return dir;
 }
 
