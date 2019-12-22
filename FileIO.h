@@ -37,38 +37,38 @@ class FileIO {
   // TODO: Investigate why vec2d not working outside of class def in template
   // ReadFile
   template <typename T>
-  std::vector<std::vector<T>> ReadFile(const std::string& file_name,
+  static std::vector<std::vector<T>> ReadFile(const std::string& file_name,
                                        size_t columns, char comment = '#',
                                        bool jagged = false);
 
   template <typename T>
-  std::vector<std::vector<T>> PrintFile(const std::string& file_name,
+  static std::vector<std::vector<T>> PrintFile(const std::string& file_name,
                                         size_t columns, char comment = '#');
 
   template <typename T>
-  void Write2File(std::vector<std::vector<T>>& data,
+  static void Write2File(std::vector<std::vector<T>>& data,
                   const std::string& file_name,
                   const std::string& del,
                   bool jagged = false);
 
   template <typename T>
-  void Write2File(std::vector<T>& data,
+  static void Write2File(std::vector<T>& data,
                   const std::string& file_name);
 
   template <typename T>
-  void PrintArray(std::vector<std::vector<T>>& data);
+  static void PrintArray(std::vector<std::vector<T>>& data);
 
   template <typename T>
-  std::vector<T> LoadSingleCol(const std::string& file_name);
+  static std::vector<T> LoadSingleCol(const std::string& file_name);
 
   // TODO: need to find a way to move this from preprocessor into the class
-  std::string getExecutablePath();
+  static std::string getExecutablePath();
 
-  std::string find_and_replace(std::string& source, const std::string& find,
+  static std::string find_and_replace(std::string& source, const std::string& find,
                                const std::string& replace);
 
  protected:
-  void get_time(std::ofstream& stream);
+  static void get_time(std::ofstream& stream);
 };
 
 FileIO::FileIO() {}
