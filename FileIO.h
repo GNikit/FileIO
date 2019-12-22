@@ -49,7 +49,15 @@ class FileIO {
   static void Write2File(std::vector<std::vector<T>>& data,
                   const std::string& file_name,
                   const std::string& del,
-                  bool jagged = false);
+                  const std::string& header,
+                  bool jagged);
+
+  template <typename T>
+  static void Write2File(std::vector<std::vector<T>>& data,
+                  std::ofstream &f,
+                  const std::string& del,
+                  const std::string& header,
+                  bool jagged);
 
   template <typename T>
   static void Write2File(std::vector<T>& data,
@@ -132,7 +140,7 @@ std::vector<std::vector<T>> FileIO::ReadFile(const std::string& file_name,
           // Pass string to input string stream
           std::istringstream ss(line);
 
-          // Read the nubers into a temp vector
+          // Read the numbers into a temp vector
           std::vector<T> t;  // Possibly reserve some space more efficient
           T num;
           // Pass values from string stream to vector
@@ -211,12 +219,26 @@ std::vector<std::vector<T>> FileIO::PrintFile(const std::string& file_name,
 
 template <typename T>
 void FileIO::Write2File(std::vector<std::vector<T>>& data,
-                        const std::string& file_name,
+                        const std::string& filename,
                         const std::string& del,
+                        const std::string& header,
+                        bool jagged){
+
+  std::ofstream f;
+  f.open(filename, std::ios::out | std::ios::trunc);
+
+  Write2File<double>(data, f, del, header, jagged);
+}
+
+template <typename T>
+void FileIO::Write2File(std::vector<std::vector<T>>& data,
+                        std::ofstream &f,
+                        const std::string& del,
+                        const std::string& header,
                         bool jagged) {
   /*
-   * THIS METHOD TRANPOSES THE VECTOR IF THE ARRAY IS NOT JAGGED!!!
-   * e.g. a [10][2] will be written as a [2][10]
+   * THIS METHOD TRANSPOSES THE VECTOR IF THE ARRAY IS NOT JAGGED!!!
+   * e.g. a 10x2 will be written as a 2x10
    * Takes a 2D vector as input and writes it to a file 
    * regardless of its structure.
    * 
@@ -227,10 +249,9 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data,
 
   // TODO: currently only handles 2D vectors can't be bothered to make it more general
   // can be generalised by making it a T,U template with U the typw of 'data' variable
-  // Open stream out
-  std::ofstream f;
-  f.open(file_name, std::ios::out | std::ios::trunc);
-
+  if (!header.empty())
+    f << header << std::endl;
+ 
   if (jagged) {
     for (const auto& row : data) {
       for (const auto& col : row) {
