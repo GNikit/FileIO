@@ -31,9 +31,9 @@ class FileIO {
 
   // TODO: make it return a tuple of vectors
   // could be done by either templating a second template variable TUPLE_N
-  // ---> TUPLE_N FileIO<T>::ReadFile(const std::string & file_name, blah
+  // TUPLE_N FileIO<T>::ReadFile(const std::string & file_name, blah
   // blah blah) or using a vardic template
-  //--->http://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
+  // http://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
   // TODO: Investigate why vec2d not working outside of class def in template
   // ReadFile
 
@@ -41,24 +41,25 @@ class FileIO {
    *  Used to read a file with either "space" or "tab" delimated columns.
    *  The number of columns in the file has to be known and be passed as an
    *  argument.
-   *  
+   *
    *  --structured arrays--
    *      |0 1 2|                                |0 3 6|
    *  v = |3 4 5| ; then v[0] = [0 1 2] ; file = |1 4 7|
-   *      |6 7 8|                                |2 5 8|  
-   *  
+   *      |6 7 8|                                |2 5 8|
+   *
    *  --jagged arrays--
    *      |0    |                            |0    |
    *  v = |1 2  | ; then v[0] = [0] ; file = |1 2  |
    *      |3 4 5|                            |3 4 5|
-   * 
-   *  In the case where the array is jagged, then no transpose occurs 
+   *
+   *  In the case where the array is jagged, then no transpose occurs
    *  and the vector is written in the file as-is.
    *
    *  In the case where a smaller number of columns is supplied, than the number
    *  contained in the file, then only these columns will be extracted.
    *
-   *  @param file_name: The name/relative path to the file (including the extension)
+   *  @param file_name: The name/relative path to the file (including the
+   * extension)
    *  @param columns: The total number of columns in the file
    *  @param comment: Character to be treated as comment. Lines starting with
    *                  comment will be ignored
@@ -68,14 +69,16 @@ class FileIO {
    */
   template <typename T>
   static std::vector<std::vector<T>> ReadFile(const std::string& file_name,
-                                       size_t columns, char comment = '#',
-                                       bool jagged = false);
+                                              size_t columns,
+                                              char comment = '#',
+                                              bool jagged = false);
 
   /**
    * Prints the file contents to the terminal, without the comments or headers.
    * The method assumes that all columns are of the same length.
-   * 
-   *  @param file_name: The name/relative path to the file (including the extension)
+   *
+   *  @param file_name: The name/relative path to the file (including the
+   * extension)
    *  @param columns: The total number of columns in the file
    *  @param comment: Character to be treated as comment. Lines starting with
    *                  comment will be ignored
@@ -84,37 +87,37 @@ class FileIO {
    */
   template <typename T>
   static std::vector<std::vector<T>> PrintFile(const std::string& file_name,
-                                        size_t columns, char comment = '#');
+                                               size_t columns,
+                                               char comment = '#');
 
-  /** 
+  /**
    * @brief Write a 2D vector to a file.
-   * 
+   *
    * @warning THIS METHOD TRANSPOSES THE VECTOR IF THE ARRAY IS NOT JAGGED!!!
    * e.g. a 10x2 will be written as a 2x10
-   * Takes a 2D vector as input and writes it to a file 
+   * Takes a 2D vector as input and writes it to a file
    * regardless of its structure.
-   * 
+   *
    * @param data: 2D data vector
-   * @param file_name: The name/relative path to the file (including the extension)
+   * @param file_name: The name/relative path to the file (including the
+   * extension)
    * @param del: The delimiter that the file will be separated with
    * @param header: An optional header for the file
    * @param jagged: set to true if not all columns have the same size
    */
   template <typename T>
   static void Write2File(std::vector<std::vector<T>>& data,
-                  const std::string& file_name,
-                  const std::string& del,
-                  const std::string& header,
-                  bool jagged);
+                         const std::string& file_name, const std::string& del,
+                         const std::string& header, bool jagged);
 
   /**
    * @brief Write a 2D vector to a file.
-   * 
+   *
    * @warning THIS METHOD TRANSPOSES THE VECTOR IF THE ARRAY IS NOT JAGGED!!!
    * e.g. a 10x2 will be written as a 2x10
-   * Takes a 2D vector as input and writes it to a file 
+   * Takes a 2D vector as input and writes it to a file
    * regardless of its structure.
-   * 
+   *
    * @param data: 2D data vector
    * @param f: The filestream to write
    * @param del: The delimiter that the file will be separated with
@@ -122,22 +125,20 @@ class FileIO {
    * @param jagged: set to true if not all columns have the same size
    */
   template <typename T>
-  static void Write2File(std::vector<std::vector<T>>& data,
-                  std::ofstream &f,
-                  const std::string& del,
-                  const std::string& header,
-                  bool jagged);
+  static void Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
+                         const std::string& del, const std::string& header,
+                         bool jagged);
 
   /**
-   * Takes a 1D vector as input and writes it to a file 
+   * Takes a 1D vector as input and writes it to a file
    * regardless of its structure.
-   * 
+   *
    * @param data: 1D data structure
-   * @param file_name: The name/relative path to the file (including the extension)
+   * @param file_name: The name/relative path to the file (including the
+   * extension)
    */
   template <typename T>
-  static void Write2File(std::vector<T>& data,
-                  const std::string& file_name);
+  static void Write2File(std::vector<T>& data, const std::string& file_name);
 
   template <typename T>
   static void PrintArray(std::vector<std::vector<T>>& data);
@@ -152,8 +153,9 @@ class FileIO {
   // TODO: need to find a way to move this from preprocessor into the class
   static std::string getExecutablePath();
 
-  static std::string find_and_replace(std::string& source, const std::string& find,
-                               const std::string& replace);
+  static std::string find_and_replace(std::string& source,
+                                      const std::string& find,
+                                      const std::string& replace);
 
  protected:
   static void get_time(std::ofstream& stream);
@@ -259,11 +261,8 @@ std::vector<std::vector<T>> FileIO::PrintFile(const std::string& file_name,
 
 template <typename T>
 void FileIO::Write2File(std::vector<std::vector<T>>& data,
-                        const std::string& filename,
-                        const std::string& del,
-                        const std::string& header,
-                        bool jagged){
-
+                        const std::string& filename, const std::string& del,
+                        const std::string& header, bool jagged) {
   std::ofstream f;
   f.open(filename, std::ios::out | std::ios::trunc);
 
@@ -271,16 +270,14 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data,
 }
 
 template <typename T>
-void FileIO::Write2File(std::vector<std::vector<T>>& data,
-                        std::ofstream &f,
-                        const std::string& del,
-                        const std::string& header,
+void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
+                        const std::string& del, const std::string& header,
                         bool jagged) {
-  // TODO: currently only handles 2D vectors can't be bothered to make it more general
-  // can be generalised by making it a T,U template with U the typw of 'data' variable
-  if (!header.empty())
-    f << header << std::endl;
- 
+  // TODO: currently only handles 2D vectors can't be bothered to make it more
+  // general can be generalised by making it a T,U template with U the typw of
+  // 'data' variable
+  if (!header.empty()) f << header << std::endl;
+
   if (jagged) {
     for (const auto& row : data) {
       for (const auto& col : row) {
@@ -301,11 +298,10 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data,
 }
 
 template <typename T>
-void FileIO::Write2File(std::vector<T>& data,
-                        const std::string& file_name) {
-  // TODO: currently only handles 2D vectors can't be bothered to make it more general
-  // can be generalised by making it a T,U template with U the typw of 'data' variable
-  // Open stream out
+void FileIO::Write2File(std::vector<T>& data, const std::string& file_name) {
+  // TODO: currently only handles 2D vectors can't be bothered to make it more
+  // general can be generalised by making it a T,U template with U the typw of
+  // 'data' variable Open stream out
   std::ofstream f;
   f.open(file_name, std::ios::out | std::ios::trunc);
 
@@ -353,12 +349,13 @@ std::string FileIO::getExecutablePath() {
   // TODO: find a better implementation without redefinition inside the template
   std::string dir = getExePath();
 #ifdef _WIN32
-    dir = find_and_replace(dir, "\\", "/");
+  dir = find_and_replace(dir, "\\", "/");
 #endif
   return dir;
 }
 
-std::string FileIO::find_and_replace(std::string& source, const std::string& find,
+std::string FileIO::find_and_replace(std::string& source,
+                                     const std::string& find,
                                      const std::string& replace) {
   for (std::string::size_type i = 0;
        (i = source.find(find, i)) != std::string::npos;) {
