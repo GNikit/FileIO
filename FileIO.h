@@ -281,17 +281,21 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
   if (jagged) {
     for (const auto& row : data) {
       for (const auto& col : row) {
+        // TODO: fix: shouldn't be adding del character and EOL character
         f << col << del;
       }
       // For some reason this executes twice at EOF
       f << std::endl;
     }
   } else {
-    for (size_t col = 0; col < data[0].size(); ++col) {
-      for (size_t i = 0; i < data.size(); ++i) {
-        f << data[i][col] << del;
+    size_t row, col;
+    for (col = 0; col < data[0].size(); ++col) {
+      // Write all but the last entry, since we want the last entry to not
+      // have both a del character and an EOL character
+      for (row = 0; row < data.size()-1; ++row) {
+        f << data[row][col] << del;
       }
-      f << std::endl;
+      f << data[row][col] << std::endl;
     }
   }
   f.close();
