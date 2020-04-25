@@ -266,7 +266,7 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data,
   std::ofstream f;
   f.open(filename, std::ios::out | std::ios::trunc);
 
-  Write2File<double>(data, f, del, header, jagged);
+  Write2File<T>(data, f, del, header, jagged);
 }
 
 template <typename T>
