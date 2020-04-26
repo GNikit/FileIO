@@ -126,6 +126,11 @@ class FileIO {
                          std::string const& del, std::string const& header = "",
                          size_t format = 0);
 
+  template <typename T>
+  static void Write2File(std::vector<std::vector<T>*>& data, std::ofstream& f,
+                         std::string const& del, std::string const& header = "",
+                         size_t format = 0);
+
   /**
    * @brief Takes a 1D vector as input and writes it to a file regardless of its
    * structure.
@@ -317,6 +322,59 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
       }
       f << std::endl;
     }
+  } else {
+    std::cerr << "Supplied format option: " + std::to_string(format)
+              << " not supported/implemented. Exiting without writing anything!"
+              << std::endl;
+  }
+
+  f.close();
+}
+
+template <typename T>
+void FileIO::Write2File(std::vector<std::vector<T>*>& data, std::ofstream& f,
+                        const std::string& del, const std::string& header,
+                        size_t format) {
+  if (!header.empty()) f << header << std::endl;
+
+  /**
+   * Switch that determines the formating of the file, how each sub-vector will
+   * be output.
+   * The preset option, 0, will place each sub-vector as a row of the file and
+   * will not include a the selected delimiter at the end of a line (EOL).
+   * This is the only difference between formats 0 and 2.
+   * Otherwise 2 is way more elegant and a couple % faster.
+   *
+   * format 1 is to be used when wishing to output the array with a column
+   * ordering effectively transposing it. A bit slower than both other formats.
+   */
+  if (format == 0) {
+    size_t row, col;
+    for (row = 0; row < data.size(); ++row) {
+      // Write all but the last entry, since we want the last entry to not
+      // have both a del character and an EOL character
+      for (col = 0; col < data[row]->size() - 1; ++col) {
+        f << data[row]->at(col) << del;
+      }
+      f << data[row]->at(col) << std::endl;
+    }
+  } else if (format == 1) {
+    size_t row, col;
+    for (col = 0; col < data[0]->size(); ++col) {
+      // Write all but the last entry, since we want the last entry to not
+      // have both a del character and an EOL character
+      for (row = 0; row < data.size() - 1; ++row) {
+        f << data[row]->at(col) << del;
+      }
+      f << data[row]->at(col) << std::endl;
+    }
+  } else if (format == 2) {
+    // for (const auto& row : data) {
+    //   for (const auto& col : row) {
+    //     f << col << del;  // todo: adds del + EOL, fix!
+    //   }
+    //   f << std::endl;
+    // }
   } else {
     std::cerr << "Supplied format option: " + std::to_string(format)
               << " not supported/implemented. Exiting without writing anything!"
