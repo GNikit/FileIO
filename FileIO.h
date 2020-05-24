@@ -104,7 +104,8 @@ class FileIO {
   template <typename T>
   static void Write2File(std::vector<std::vector<T>>& data,
                          std::string const& file_name, std::string const& del,
-                         std::string const& header = "", size_t format = 0);
+                         std::string const& header = "", size_t format = 0,
+                         bool index = false);
 
   /**
    * @brief Write a 2D vector to a file.
@@ -124,12 +125,12 @@ class FileIO {
   template <typename T>
   static void Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
                          std::string const& del, std::string const& header = "",
-                         size_t format = 0);
+                         size_t format = 0, bool index = false);
 
   template <typename T>
   static void Write2File(std::vector<std::vector<T>*>& data, std::ofstream& f,
                          std::string const& del, std::string const& header = "",
-                         size_t format = 0);
+                         size_t format = 0, bool index = false);
 
   /**
    * @brief Takes a 1D vector as input and writes it to a file regardless of its
@@ -271,17 +272,17 @@ std::vector<std::vector<T>> FileIO::PrintFile(const std::string& file_name,
 template <typename T>
 void FileIO::Write2File(std::vector<std::vector<T>>& data,
                         const std::string& filename, const std::string& del,
-                        const std::string& header, size_t format) {
+                        const std::string& header, size_t format, bool index) {
   std::ofstream f;
   f.open(filename, std::ios::out | std::ios::trunc);
 
-  Write2File<T>(data, f, del, header, format);
+  Write2File<T>(data, f, del, header, format, index);
 }
 
 template <typename T>
 void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
                         const std::string& del, const std::string& header,
-                        size_t format) {
+                        size_t format, bool index) {
   if (!header.empty()) f << header << std::endl;
 
   /**
@@ -298,6 +299,7 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
   if (format == 0) {
     size_t row, col;
     for (row = 0; row < data.size(); ++row) {
+      if (index) f << (row + 1) << del;
       // Write all but the last entry, since we want the last entry to not
       // have both a del character and an EOL character
       for (col = 0; col < data[row].size() - 1; ++col) {
@@ -308,6 +310,7 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
   } else if (format == 1) {
     size_t row, col;
     for (col = 0; col < data[0].size(); ++col) {
+      if (index) f << (col + 1) << del;
       // Write all but the last entry, since we want the last entry to not
       // have both a del character and an EOL character
       for (row = 0; row < data.size() - 1; ++row) {
@@ -316,9 +319,12 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
       f << data[row][col] << std::endl;
     }
   } else if (format == 2) {
+    size_t i = 1;
     for (const auto& row : data) {
+      if (index) f << i << del;
       for (const auto& col : row) {
         f << col << del;  // todo: adds del + EOL, fix!
+        ++i;
       }
       f << std::endl;
     }
@@ -334,7 +340,7 @@ void FileIO::Write2File(std::vector<std::vector<T>>& data, std::ofstream& f,
 template <typename T>
 void FileIO::Write2File(std::vector<std::vector<T>*>& data, std::ofstream& f,
                         const std::string& del, const std::string& header,
-                        size_t format) {
+                        size_t format, bool index) {
   if (!header.empty()) f << header << std::endl;
 
   /**
@@ -351,6 +357,7 @@ void FileIO::Write2File(std::vector<std::vector<T>*>& data, std::ofstream& f,
   if (format == 0) {
     size_t row, col;
     for (row = 0; row < data.size(); ++row) {
+      if (index) f << (row + 1) << del;
       // Write all but the last entry, since we want the last entry to not
       // have both a del character and an EOL character
       for (col = 0; col < data[row]->size() - 1; ++col) {
@@ -361,6 +368,7 @@ void FileIO::Write2File(std::vector<std::vector<T>*>& data, std::ofstream& f,
   } else if (format == 1) {
     size_t row, col;
     for (col = 0; col < data[0]->size(); ++col) {
+      if (index) f << (col + 1) << del;
       // Write all but the last entry, since we want the last entry to not
       // have both a del character and an EOL character
       for (row = 0; row < data.size() - 1; ++row) {
